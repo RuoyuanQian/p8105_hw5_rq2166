@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "p8105_hw5_rq2166"
 author: "Ruoyuan Qian"
 date: "11/2/2019"
 output: github_document
@@ -150,14 +150,6 @@ sim_results =
   select(-output_lists) %>% 
   unnest(estimate_dfs)
 
-sim_results %>% 
-  group_by(beta1) %>% 
-  mutate( n = n()) %>% 
- filter(p_value < 0.05) %>% 
-  mutate( n_reject_null = n(),
-          proportion = n_reject_null/n) %>% 
-  select(beta1,proportion) %>% 
-  distinct()
 ```
 
 ```{r}
@@ -176,6 +168,10 @@ sim_results %>%
        title = "Plot 2   Powers across different true beta1"
        )
 ```
+
+As for this situation, we can assume that the effect size is the difference between true beta1 and zero. So as the true beta1 increases, the effect size increases as well. 
+
+According to the Plot2, the power increases when the effect size increases. So the association between power and effect size is positively correlated.
 
 ```{r}
 plot_mean_all = 
@@ -205,6 +201,7 @@ plot_mean_all+
    theme(plot.title = element_text(hjust = 0.5))
 ```
 
-  scale_fill_discrete(name="Average\nAverage when the null was rejected",
-                         breaks=c("ctrl", "trt1"),
-                         labels=c("Control", "Treatment 1"))
+According to Plot3, the true beta1 and the average for the tests rejected the null are not equal. They are hugely different when the effect size is small, and there is a trend that the difference will decrease when the effect size increases.
+
+The reason is that when the effect size is small, the power of the test is low, so the number of the tests rejected the null is small, and the tests of beta1 rejected the null tent to be away from the null which is zero in the situation. Therefore, the average for the tests rejected the null tend to be larger than the true beta1, and the difference between them are extreme. However, as the effect size increases, the power increases, the number of the tests rejected the null increases. So the difference between two is increasingly small.
+
