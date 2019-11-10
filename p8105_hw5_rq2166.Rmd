@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw5_rq2166"
 author: "Ruoyuan Qian"
-date: "11/2/2019"
+date: "11/10/2019"
 output: github_document
 ---
 
@@ -46,7 +46,7 @@ fill_na = function(x) {
 iris_with_missing_fill = map(iris_with_missing,fill_na)  
  
   filled_data = as.data.frame(iris_with_missing_fill)
-  
+  head(filled_data)
 ```
 
 # Problem 2
@@ -131,6 +131,7 @@ sim_regression = function(n = 30, beta0 = 2, beta1, mean = 1, sd = sqrt(50)) {
 
 ## beta1 = 0
 ```{r}
+set.seed(1)
 sim_results = 
   tibble(beta1 = c(0)) %>% 
   mutate(
@@ -142,6 +143,7 @@ sim_results =
 
 ## beta1 = c(1:6)
 ```{r}
+set.seed(1)
 sim_results = 
   tibble(beta1 = c(1:6)) %>% 
   mutate(
@@ -163,15 +165,20 @@ sim_results %>%
   distinct() %>% 
  ggplot(aes(x = beta1, y = power))+
   geom_line()  +
+  geom_point()+
   labs(x = "True beta1",
        y = "Power",
        title = "Plot 2   Powers across different true beta1"
-       )
+       )+
+  theme(plot.title = element_text(hjust = 0.5))+
+  geom_text(aes(y = power + 0.1,label = power))
 ```
 
-As for this situation, we can assume that the `effect size` is the difference between true beta1 and zero. As the true beta1 increases, the effect size increases as well. 
+As for this situation, we can assume that the `effect size` is the difference between true beta1 and zero (the null). As the true beta1 increases, the effect size increases as well. 
 
 According to the Plot 2, the `power` increases when the `effect size` increases. So the association between power and effect size is `positively correlated`.
+
+When true beta1 is zero, the proportion denotes the simulation of `alpha`, which is different from the meaning when true beta1 is not equal to zero. So I don't put the value that true beta1 is zero into the plot.
 
 ```{r}
 plot_mean_all = 
@@ -184,8 +191,10 @@ sim_results %>%
   distinct() %>% 
   ggplot(aes(x = beta1, y = mean_all)) +
   geom_line(aes(color = "mean for all values"))+
+  geom_point(aes(color = "mean for all values"))+
   theme(legend.position = "bottom")+
-  labs(x = "True beta1",
+  labs(colour = "Group",
+       x = "True beta1",
        y = "Mean of beta1",
        title = "Plot 3  Average estimate of beta1_hat"
        )+
@@ -198,10 +207,12 @@ plot_mean_all
 ```{r}
 plot_mean_all+
   geom_line(aes(x = beta1,  y = mean_p, color= "mean for values rejected the null" ))+
+  geom_point(aes(x = beta1,  y = mean_p, color= "mean for values rejected the null" ))+
    theme(plot.title = element_text(hjust = 0.5))
 ```
 
-According to Plot 3, the `true beta1` and the `average` for the tests rejected the null are not equal. They are hugely different when the effect size is small, and there is a trend that the difference will decrease when the effect size increases.
+According to Plot 3, the estimation of mean for all values and the estimation of mean for the tests rejected the null are not equal. They are hugely different when the effect size is small, and there is a trend that the difference will decrease when the effect size increases.
 
-The reason is that when the effect size is small, the `power` of the test is low, so the number of the tests rejected the null is small, and the tests of beta1 rejected the null tend to be away from the null which is zero in the situation. Therefore, the `average` for the tests rejected the null tend to be larger than the `true beta1`, and the difference between them are extreme. However, as the effect size increases, the `power` increases, the number of the tests rejected the null increases. So the difference between two is increasingly small.
+The reason is that when the effect size is small, the `power` of the test is low, so the number of the tests rejected the null is small, and beta1's rejected the null tend to be away from the null which is zero in the situation. Therefore, the `average` of beta1's rejected the null tend to be larger than the mean for all values, and the difference between them are extreme. However, as the effect size increases, the `power` increases, the number of the tests rejected the null increases. So the difference between two is increasingly small.
+
 
